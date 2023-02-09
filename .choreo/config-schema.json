@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "tryit": {
+      "type": "object",
+      "properties": {
+        "asgardeo_adduser": {
+          "type": "object",
+          "properties": {
+            "config": {
+              "type": "object",
+              "properties": {
+                "clientId": {
+                  "type": "string"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "organization": {
+                  "type": "string"
+                },
+                "tokenEndpointHost": {
+                  "type": "string"
+                },
+                "callbackURL": {
+                  "type": "string"
+                },
+                "hubURL": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "clientId",
+                "clientSecret",
+                "organization",
+                "tokenEndpointHost",
+                "callbackURL",
+                "hubURL"
+              ],
+              "name": "ballerinax/trigger.asgardeo:0.4.0:ListenerConfig",
+              "description": ""
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "config"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
