@@ -15,8 +15,7 @@ type ipGeolocationResp record {
 
 // API key from ipgeolocation.io
 configurable string GEO_API_KEY = ?;
-configurable string COUNTRY_CODE = ?;
-
+configurable string SAFE_COUNTRY_CODE = ?;
 
 service / on new http:Listener(8090) {
     resource function post risk(@http:Payload RiskRequest req) returns RiskResponse|error? {
@@ -27,7 +26,7 @@ service / on new http:Listener(8090) {
         
         RiskResponse resp = {
             // hasRisk is true if the country code of the IP address is not the specified country code.
-            hasRisk: geoResponse.country_code2 != "DE"
+            hasRisk: geoResponse.country_code2 != SAFE_COUNTRY_CODE
         };
         return resp;
     }
