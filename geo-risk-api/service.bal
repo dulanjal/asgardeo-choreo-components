@@ -1,9 +1,5 @@
 import ballerina/http;
 
-type RiskResponse record {
-    boolean hasRisk;
-};
-
 type RiskRequest record {
     string ip;
 };
@@ -18,16 +14,17 @@ configurable string GEO_API_KEY = ?;
 configurable string SAFE_COUNTRY_CODE = ?;
 
 service / on new http:Listener(8090) {
-    resource function post risk(@http:Payload RiskRequest req) returns RiskResponse|error? {
+    resource function post risk(@http:Payload RiskRequest req) returns http:Response|error? {
 
         string ip = req.ip;
+
         http:Client ipGeolocation = check new ("https://api.ipgeolocation.io");
         ipGeolocationResp geoResponse = check ipGeolocation->get(string `/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_code2`);
+
+        http:Response response = new ;
+        response.setJsonPayload({hasRisk: geoResponse.country_code2 != SAFE_COUNTRY_CODE});
+        response.statusCode = 200;
         
-        RiskResponse resp = {
-            // hasRisk is true if the country code of the IP address is not the specified country code.
-            hasRisk: geoResponse.country_code2 != SAFE_COUNTRY_CODE
-        };
-        return resp;
+        return response;
     }
 }
