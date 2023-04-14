@@ -6,8 +6,7 @@ type RiskRequest record {
 };
 
 type ipGeolocationResp record {
-    string ip;
-    string country_code2;
+    string countryCode;
 };
 
 // API key from ipgeolocation.io
@@ -22,14 +21,14 @@ service / on new http:Listener(8090) {
         // Log the IP address
         log:printInfo(string`### DEBUG - Checking risk for IP: ${ip}`);
 
-        http:Client ipGeolocation = check new ("https://api.ipgeolocation.io");
-        ipGeolocationResp geoResponse = check ipGeolocation->get(string `/ipgeo?apiKey=${GEO_API_KEY}&ip=${ip}&fields=country_code2`);
+        http:Client ipGeolocation = check new ("http://ip-api.com");
+        ipGeolocationResp geoResponse = check ipGeolocation->get(string `/json/${ip}?fields=countryCode`);
 
         // Log the country code
-        log:printInfo(string`### DEBUG - Country code: ${geoResponse.country_code2}`);
+        log:printInfo(string`### DEBUG - Country code: ${geoResponse.countryCode}`);
 
         http:Response response = new ;
-        response.setJsonPayload({hasRisk: geoResponse.country_code2 != SAFE_COUNTRY_CODE});
+        response.setJsonPayload({hasRisk: geoResponse.countryCode != SAFE_COUNTRY_CODE});
         response.statusCode = 200;
 
         return response;
