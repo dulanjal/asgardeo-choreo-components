@@ -3,6 +3,7 @@ import ballerina/log;
 
 type RiskRequest record {
     string ip;
+    string allowedCountryCode;
 };
 
 type ipGeolocationResp record {
@@ -17,6 +18,7 @@ service / on new http:Listener(8090) {
     resource function post risk(@http:Payload RiskRequest req) returns http:Response|error? {
 
         string ip = req.ip;
+        string allowedCountryCode = req.allowedCountryCode;
 
         // Log the IP address
         log:printInfo(string`### DEBUG - Checking risk for IP: ${ip}`);
@@ -28,7 +30,7 @@ service / on new http:Listener(8090) {
         log:printInfo(string`### DEBUG - Country code: ${geoResponse.countryCode}`);
 
         http:Response response = new ;
-        response.setJsonPayload({hasRisk: geoResponse.countryCode != SAFE_COUNTRY_CODE});
+        response.setJsonPayload({hasRisk: geoResponse.countryCode != allowedCountryCode});
         response.statusCode = 200;
 
         return response;
