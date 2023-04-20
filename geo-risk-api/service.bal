@@ -1,5 +1,6 @@
 import ballerina/http;
 import ballerina/log;
+import ballerina/time;
 
 type RiskRequest record {
     string ip;
@@ -20,8 +21,13 @@ service / on new http:Listener(8090) {
         log:printInfo(string`### DEBUG - Checking risk for IP: ${ip}`);
         log:printInfo(string`### DEBUG - Allowed country code for users: ${allowedCountryCode}`);
 
+        time:Utc t1 = time:utcNow();
+
         http:Client ipGeolocation = check new ("http://ip-api.com");
         ipGeolocationResp geoResponse = check ipGeolocation->get(string `/json/${ip}?fields=countryCode`);
+        
+        time:Utc t2 = time:utcNow();
+        log:printInfo(string`### DEBUG - Time taken to call the external API: ${time:utcDiffSeconds(t2, t1)}`);
 
         // Log the country code
         log:printInfo(string`### DEBUG - Country code returned from Geolocation Service ip-api.com: ${geoResponse.countryCode}`);
